@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/nav_home" />
+
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_home"
+            android:title="@string/my_profile" />
+
+        <item
+            android:id="@+id/nav_available_jobs"
+            android:icon="@drawable/ic_notification"
+            android:title="@string/available_jobs" />
+
+    </group>
+
+    <item android:title="@string/other">
+        <menu>
+            <item
+                android:id="@+id/nav_about_us"
+                android:title="@string/nav_about_us" />
+            <item
+                android:id="@+id/nav_privacy_policy"
+                android:title="@string/privacy_policy" />
+            <item android:title="@string/terms_and_conditions" />
+
+        </menu>
+    </item>
+    <item android:title="@string/action">
+        <menu>
+            <item
+                android:id="@+id/nav_log_out"
+                android:title="@string/log_out" />
+            <item
+                android:enabled="false"
+                android:title="" />
+
+        </menu>
+    </item>
+
+</menu>

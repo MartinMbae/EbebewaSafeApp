@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.ebebewa">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher_ebebewa"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_ebebewa_round"
+        android:screenOrientation="portrait"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon,android:roundIcon">
+        <activity android:name=".CheckUpdateActivity"></activity>
+        <activity android:name=".activities.PaymentsAcivity" />
+        <activity android:name=".VerifyActivity" />
+        <activity android:name=".activities.job_applicants.JobApplicantsActivity" />
+        <activity
+            android:name=".activities.EditPostedJobActivity"
+            android:label="Edit Delivery Job" />
+        <activity android:name=".activities.PrivacyPolicyActivity" />
+        <activity android:name=".activities.AboutUsActivity" />
+        <activity
+            android:name=".activities.HomeActivityDriver"
+            android:theme="@style/NoToolBarOnly" />
+        <activity
+            android:name=".activities.HomeActivityClient"
+            android:theme="@style/NoToolBarOnly" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activities.MainActivity" />
+        <activity
+            android:name=".activities.LaunchActivity"
+            android:theme="@style/NoToolBarAndStatusBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.registration.helpers.NewDriverReg"
+            android:theme="@style/AppThemeMaterialStyle" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity
+            android:name=".activities.registration.helpers.NewClientReg"
+            android:theme="@style/AppThemeMaterialStyle" />
+        <activity android:name=".activities.FaqActivity" />
+        <activity
+            android:name=".activities.post_job.PostDeliveryJobActivity"
+            android:label="Post Delivery Job"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity android:name=".activities.TermsConditionsActivity" />
+        <activity android:name=".IPayActivity" />
+        <activity
+            android:name=".activities.IntroActivity"
+            android:theme="@style/NoToolBarAndStatusBar" />
+        <activity android:name=".activities.InviteActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+    </application>
+
+</manifest>
