@@ -45,7 +45,9 @@ import com.example.ebebewa.activities.registration.helpers.NewClientReg;
 import com.example.ebebewa.activities.registration.helpers.NewDriverReg;
 import com.example.ebebewa.utils.Constants;
 import com.example.ebebewa.utils.SharedPref;
+import com.stepstone.apprating.AppRatingDialog;
 
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -770,7 +772,6 @@ public class LoginActivity extends AppCompatActivity {
 
         dialog.show();
     }
-
 
     private interface ApiService {
         @POST("api/login")

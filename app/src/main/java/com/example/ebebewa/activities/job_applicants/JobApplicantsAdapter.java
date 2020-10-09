@@ -120,9 +120,11 @@ public class JobApplicantsAdapter extends RecyclerView.Adapter<JobApplicantsAdap
                         String clientConfirmedReceipt = bidJob.getClient_receipt_confirmation();
                         String bidStatus = bidJob.getBid_status();
 
+                        String driver_id = bidJob.getDriver();
+
                         if (clientConfirmedReceipt.equalsIgnoreCase("0") && deliveryStatus.equalsIgnoreCase("1")) {
                             view_more.setText("Confirm that you have received the luggage");
-                            view_more.setOnClickListener(v -> jobApplicantsActivity.confirmLuggageDelivery());
+                            view_more.setOnClickListener(v -> jobApplicantsActivity.confirmLuggageDeliveryAndRate(driver_id));
                         } else if (clientConfirmedReceipt.equalsIgnoreCase("1") && deliveryStatus.equalsIgnoreCase("1")) {
                             view_more.setVisibility(View.GONE);
                             deliveryLayout.setVisibility(View.VISIBLE);

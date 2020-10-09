@@ -30,4 +30,12 @@
     <color name="tab_indicator_gray">#c0c0c0</color>
     <color name="intro_title_color">#000000</color>
 
+
+
+    <color name="starColor">#57a6f0</color>
+    <color name="noteDescriptionTextColor">#57a6f0</color>
+    <color name="titleTextColor">#D9141627</color>
+    <color name="descriptionTextColor">#80141627</color>
+    <color name="commentTextColor">#D9141627</color>
+
 </resources>

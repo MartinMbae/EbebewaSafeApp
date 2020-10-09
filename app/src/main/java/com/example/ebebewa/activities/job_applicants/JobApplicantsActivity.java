@@ -25,6 +25,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ebebewa.activities.LoginActivity;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
@@ -41,19 +42,25 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.POST;
 import retrofit2.http.PUT;
+
 import com.example.ebebewa.R;
 import com.example.ebebewa.activities.HomeActivityClient;
 import com.example.ebebewa.utils.Constants;
 import com.example.ebebewa.utils.SharedPref;
+import com.stepstone.apprating.AppRatingDialog;
+import com.stepstone.apprating.listener.RatingDialogListener;
 
-public class JobApplicantsActivity extends AppCompatActivity {
+public class JobApplicantsActivity extends AppCompatActivity implements RatingDialogListener {
     String id, in_voice;
     private SharedPref sharedPref;
     private LinearLayout emptyAvailableJobLayout;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private ProgressDialog progressDialog;
+
+    private String driver_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,12 +137,6 @@ public class JobApplicantsActivity extends AppCompatActivity {
                 emptyAvailableJobLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
 
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    Log.d("urfdhi", jsonObject.toString());
-
-                }
-
                 List<Applicants> applicantsList = Arrays.asList(new GsonBuilder().create().fromJson(jsonArray.toString(), Applicants[].class));
                 JobApplicantsAdapter jobApplicantsAdapter = new JobApplicantsAdapter(JobApplicantsActivity.this, applicantsList, this, id);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(JobApplicantsActivity.this);
@@ -178,7 +179,40 @@ public class JobApplicantsActivity extends AppCompatActivity {
         alert.show();
     }
 
+    public void confirmLuggageDeliveryAndRate(String driver_id) {
+        this.driver_id = driver_id;
+        showDialog();
+    }
+
+    private void showDialog() {
+        new AppRatingDialog.Builder()
+                .setPositiveButtonText("Confirm Delivery")
+                .setNegativeButtonText("Cancel")
+                .setNoteDescriptions(Arrays.asList("Very Bad", "Not good", "Quite ok", "Very Good", "Excellent !!!"))
+                .setDefaultRating(5)
+                .setTitle("Confirm Delivery")
+                .setDescription("Confirm that you have received the luggage and give feedback on the service offered.")
+                .setCommentInputEnabled(true)
+                .setStarColor(R.color.starColor)
+                .setNoteDescriptionTextColor(R.color.noteDescriptionTextColor)
+                .setTitleTextColor(R.color.titleTextColor)
+//                .setDescriptionTextColor(R.color.contentTextColor)
+                .setHint("Leave your feedback (Optional)")
+//                .setDefaultComment("")
+//                .setHintTextColor(R.color.hintTextColor)
+                .setCommentTextColor(R.color.commentTextColor)
+                .setCommentBackgroundColor(R.color.colorPrimaryDark)
+//                .setWindowAnimation(R.style.MyDialogFadeAnimation)
+                .setCancelable(false)
+                .setCanceledOnTouchOutside(false)
+                .create(JobApplicantsActivity.this)
+//                .setTargetFragment(this, TAG) // only if listener is implemented by fragment
+                .show();
+    }
+
     public void confirmLuggageDelivery() {
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(JobApplicantsActivity.this);
 
 
@@ -436,6 +470,68 @@ public class JobApplicantsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onNegativeButtonClicked() {
+
+    }
+
+    @Override
+    public void onNeutralButtonClicked() {
+
+    }
+
+    @Override
+    public void onPositiveButtonClicked(int i, @NotNull String s) {
+
+        int points = i * 10;
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("client", sharedPref.getLoggedInUserID());
+        jsonObject.addProperty("driver", driver_id);
+        jsonObject.addProperty("job", id);
+        jsonObject.addProperty("points", points);
+
+        acceptDelivery(id, s);
+
+        submitDataRating(jsonObject);
+
+    }
+
+    private void submitDataRating(JsonObject jsonObject) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ApiServiceRatings service = retrofit.create(ApiServiceRatings.class);
+        Call<JsonObject> call = service.postRatings(jsonObject);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
+                    String response_string = response.body().toString();
+
+                } else {
+                    showSuccessfulDialog("Failed", "Something went wrong. Please try again.");
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<JsonObject> call, @NotNull Throwable t) {
+                progressDialog.dismiss();
+                showSuccessfulDialog("Failed", "Something went wrong. Please try again." + t.getMessage());
+
+            }
+
+        });
+    }
+
+    private interface ApiServiceRatings {
+        @POST("api/posts/driverrating")
+        Call<JsonObject> postRatings(@Body JsonObject body);
+    }
     private interface ApiService {
         @PUT("api/posts/clientacceptance")
         Call<JsonObject> postData(@Body JsonObject body);
