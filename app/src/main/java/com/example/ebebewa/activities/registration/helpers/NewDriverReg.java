@@ -99,6 +99,7 @@ public class NewDriverReg extends AppCompatActivity implements StepperFormListen
         String plateNumber = transportInfo.plateNumber;
         String vehicleOwned = transportInfo.vehicleOwned;
         String payment = transportInfo.payment;
+        String ownership = transportInfo.owner_of_vehicle;
         String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         String passport_photo = personalDetails.photoBase64;
         String role = Constants.DRIVER_ROLE;
@@ -130,6 +131,7 @@ public class NewDriverReg extends AppCompatActivity implements StepperFormListen
         jsonObject.addProperty("plate_number", plateNumber);
         jsonObject.addProperty("payment_mode", payment);
         jsonObject.addProperty("agent_code", agentCode);
+        jsonObject.addProperty("ownership", ownership);
         submitData(jsonObject);
 
     }

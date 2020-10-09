@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,11 +39,15 @@ import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+
 import com.example.ebebewa.R;
 import com.example.ebebewa.activities.registration.helpers.NewClientReg;
 import com.example.ebebewa.activities.registration.helpers.NewDriverReg;
 import com.example.ebebewa.utils.Constants;
 import com.example.ebebewa.utils.SharedPref;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -73,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPref = new SharedPref(this);
 
+
         int pos = getIntent().getIntExtra("FROM_REGISTER", 0);
         if (pos != 0) {
             String phoneString = getIntent().getStringExtra("phone");
@@ -82,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             if (usernameString != null)
                 username.setSelection(usernameString.length());
             password.setText(passwordString);
-            showInputPhoneNumberDialog(usernameString, passwordString);
+            showInputPhoneNumberDialog(phoneString, usernameString, passwordString);
 
         }
 
@@ -99,49 +105,13 @@ public class LoginActivity extends AppCompatActivity {
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog dialog = new Dialog(LoginActivity.this);
-                dialog.setContentView(R.layout.provide_email_dialog);
-                dialog.setCancelable(false);
-
-                TextInputEditText email = dialog.findViewById(R.id.email);
-                String savedEmail = sharedPref.getEmailAddress();
-
-                if (savedEmail != null) {
-                    email.setText(savedEmail);
-                }
-
-                Button cancelBtn = dialog.findViewById(R.id.cancelBtn);
-                Button submitBtn = dialog.findViewById(R.id.submitBtn);
-
-                cancelBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                submitBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        String filledEmail = email.getText().toString();
-                        if (TextUtils.isEmpty(filledEmail)){
-                            email.setError("Provide this field");
-                        }else {
-                            processForgotPasswordRequest(filledEmail);
-                            dialog.dismiss();
-                        }
-
-                    }
-                });
-
-                dialog.show();
+                showForgotPasswordDialog();
             }
         });
 
     }
 
-    private void processForgotPasswordRequest(String filledEmail) {
+    private void processForgotPasswordRequest(String username, LinearLayout hiddenLayout, TextInputEditText editUsername) {
         progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Please wait");
@@ -149,12 +119,28 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
 
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("email", filledEmail);
-        submitForgotPasswordData(jsonObject);
+        jsonObject.addProperty("username", username);
+        submitForgotPasswordData(jsonObject, hiddenLayout,editUsername);
 
     }
 
-    private void submitForgotPasswordData(JsonObject jsonObject) {
+    private void processForgotPasswordRequestFInal(String resetcode, String new_password, String confirm_password) {
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Please wait");
+        progressDialog.setMessage("Submitting your request...");
+        progressDialog.show();
+
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("resetcode", resetcode);
+        jsonObject.addProperty("new_password", new_password);
+        jsonObject.addProperty("confirm_password", confirm_password);
+        submitForgotPasswordFinalData(jsonObject);
+
+    }
+
+    private void submitForgotPasswordData(JsonObject jsonObject, LinearLayout hiddenLayout, TextInputEditText editUsername) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -173,11 +159,58 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         JSONObject obj = new JSONObject(response_string);
 
-                        Log.d("ssssssssssss",obj.toString());
                         String status = obj.getString("Status");
                         String message = obj.getString("Message");
                         if (status.equalsIgnoreCase("true")) {
-                           showSuccessfulDialog("Success","A link to reset your password has been sent to your email.");
+                            showSuccessfulDialog("Success", "A code has been sent to your phone number. Use the code to reset your password.");
+                            hiddenLayout.setVisibility(View.VISIBLE);
+                            editUsername.setEnabled(false);
+                        } else {
+                            showSuccessfulDialog("Oops", message);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        showSuccessfulDialog("Failed", "Something went wrong. Please try again " + e.getMessage());
+                    }
+                } else {
+                    showSuccessfulDialog("Failed", "Something went wrong. Please try again ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+//                alertDialog.dismiss();
+                showSuccessfulDialog("Failed", "Something went wrong. Please try again." + t.getMessage());
+                progressDialog.dismiss();
+            }
+
+        });
+    }
+
+    private void submitForgotPasswordFinalData(JsonObject jsonObject) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        APIResendCodeFinal service = retrofit.create(APIResendCodeFinal.class);
+        Call<JsonObject> call = service.resendCodeData(jsonObject);
+        call.enqueue(new Callback<JsonObject>() {
+
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
+                    String response_string = response.body().toString();
+                    try {
+                        JSONObject obj = new JSONObject(response_string);
+
+                        String status = obj.getString("Status");
+                        String message = obj.getString("Message");
+                        if (status.equalsIgnoreCase("true")) {
+                            showSuccessfulDialog("Success", "Your password has been successfully updated.");
                         } else {
                             showSuccessfulDialog("Oops", message);
                         }
@@ -230,7 +263,7 @@ public class LoginActivity extends AppCompatActivity {
                     txtInLayoutPassword.setError("");
 
 
-                    loginAction(usernameText, passwordText);
+                    loginAction("", usernameText, passwordText);
 
 
                 }
@@ -239,12 +272,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void loginAction(String usernameText, String passwordText) {
+    private void loginAction(String phone, String usernameText, String passwordText) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("username", usernameText);
         jsonObject.addProperty("pass", passwordText);
 
-        submitData(jsonObject, usernameText, passwordText);
+        submitData(jsonObject, phone, usernameText, passwordText);
     }
 
     //The method for opening the registration page and another processes or checks for registering
@@ -282,7 +315,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void submitData(JsonObject jsonObject, final String usernameText, final String passwordText) {
+    private void submitData(JsonObject jsonObject, final String phone, final String usernameText, final String passwordText) {
 
         progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setTitle("Signing in");
@@ -383,7 +416,7 @@ public class LoginActivity extends AppCompatActivity {
                             String message = obj.getString("message");
 
                             if (message.contains("inactive")) {
-                                showInputPhoneNumberDialog(usernameText, passwordText);
+                                showInputPhoneNumberDialog(phone, usernameText, passwordText);
                             } else {
                                 errorTextView.setText(message);
                                 errorTextView.setVisibility(View.VISIBLE);
@@ -411,12 +444,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void showInputPhoneNumberDialog(final String usernameText, final String passwordText) {
+    private int timeToResendDefault = 40;
+    private int timeToResend = timeToResendDefault;
+
+    private void showInputPhoneNumberDialog(final String phoneNumber, final String usernameText, final String passwordText) {
         final Dialog dialog = new Dialog(LoginActivity.this);
         dialog.setContentView(R.layout.activity_verify);
         dialog.setCancelable(true);
 
         TextView errorTetxView = dialog.findViewById(R.id.errorMessage);
+        TextView resend_code = dialog.findViewById(R.id.resend_code);
         final TextInputEditText codeEdt = dialog.findViewById(R.id.editTextCode);
         final AppCompatButton verifyBtn = dialog.findViewById(R.id.buttonVerify);
         ImageButton cancelDialog = dialog.findViewById(R.id.canceDialog);
@@ -449,6 +486,43 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         checkAccuracy(errorTetxView, codeEdt, verifyBtn);
+
+
+        Timer T = new Timer();
+        T.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String resendText = "Will resend code in " + timeToResend + " seconds";
+                        resend_code.setText(resendText);
+                        timeToResend--;
+
+                        if (timeToResend == 0) {
+                            T.cancel();
+                            resend_code.setText("Click to resend code");
+                            resend_code.setTextColor(getResources().getColor(R.color.blue));
+
+
+                            resend_code.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+
+                                    requestResendCode(phoneNumber, usernameText, passwordText);
+
+                                }
+                            });
+
+                            timeToResend = timeToResendDefault;
+                        }
+                    }
+                });
+            }
+        }, 1000, 1000);
+
+
         dialog.show();
     }
 
@@ -527,7 +601,7 @@ public class LoginActivity extends AppCompatActivity {
                         String message = obj.getString("message");
                         if (status.equals("true")) {
                             dialog.dismiss();
-                            loginAction(username, password);
+                            loginAction("", username, password);
                         } else {
                             showSuccessfulDialog("Oops", message);
                         }
@@ -552,6 +626,151 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public void requestResendCode(String phone, String username, String password) {
+
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("phone", phone);
+        jsonObject.addProperty("username", username);
+
+        submitResendCode(jsonObject, phone, username, password);
+
+    }
+
+    private void submitResendCode(JsonObject jsonObject, String phone, String username, String password) {
+
+        progressDialog = new ProgressDialog(LoginActivity.this);
+
+        progressDialog.setMessage("Resending code");
+        progressDialog.setTitle("Please wait");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        APIResendCode service = retrofit.create(APIResendCode.class);
+        Call<JsonObject> call = service.resendCodeData(jsonObject);
+        call.enqueue(new Callback<JsonObject>() {
+
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
+                    String response_string = response.body().toString();
+
+                    Log.e("dddddddddddddddd", response_string);
+
+
+                    try {
+                        JSONObject obj = new JSONObject(response_string);
+                        String status = obj.getString("Status");
+                        String message = obj.getString("Message");
+                        if (status.equalsIgnoreCase("true")) {
+                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+
+                            showInputPhoneNumberDialog(phone, username, password);
+
+                            showSuccessfulDialog("Success", "Another code has been generated and sent to your phone number(" + phone + ")");
+                        } else {
+                            showSuccessfulDialog("Oops", message);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        showSuccessfulDialog("Failed", "Something went wrong. Please try again " + e.getMessage());
+                    }
+                } else {
+                    showSuccessfulDialog("Failed", "Something went wrong. Please try again ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+//                alertDialog.dismiss();
+                showSuccessfulDialog("Failed", "Something went wrong. Please try again." + t.getMessage());
+                progressDialog.dismiss();
+            }
+
+        });
+    }
+
+    private void showForgotPasswordDialog() {
+        final Dialog dialog = new Dialog(LoginActivity.this);
+        dialog.setContentView(R.layout.dialog_reset_password);
+        dialog.setCancelable(false);
+        final TextInputEditText editUsername = dialog.findViewById(R.id.editUsername);
+        final TextInputEditText editOTPCode = dialog.findViewById(R.id.editOTPCode);
+        final TextInputEditText editNewPassword = dialog.findViewById(R.id.editNewPassword);
+        final TextInputEditText editConfirmPassword = dialog.findViewById(R.id.editConfirmPassword);
+        final AppCompatButton verifyBtn = dialog.findViewById(R.id.buttonVerify);
+        ImageButton cancelDialog = dialog.findViewById(R.id.canceDialog);
+        LinearLayout hiddenLayout = dialog.findViewById(R.id.hiddenLayout);
+        hiddenLayout.setVisibility(View.GONE);
+        cancelDialog.setOnClickListener(v -> dialog.dismiss());
+
+        editUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (s.length() > 2) {
+                    verifyBtn.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        verifyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String username = editUsername.getText().toString().trim();
+
+                if (hiddenLayout.getVisibility() == View.VISIBLE) {
+
+                    String OTP = editOTPCode.getText().toString().trim();
+                    String newPass = editNewPassword.getText().toString().trim();
+                    String confPass = editConfirmPassword.getText().toString().trim();
+
+                    if (OTP.length() < 2) {
+                        editOTPCode.setError("Please provide the OTP code");
+                        return;
+                    }
+
+                    if (newPass.length() < 8) {
+                        editNewPassword.setError("Password must contain more 8 or more characters");
+                        return;
+                    }
+
+                    if (!newPass.equals(confPass)) {
+                        editConfirmPassword.setError("Passwords failed to match");
+                        return;
+                    }
+                    dialog.dismiss();
+                    processForgotPasswordRequestFInal(OTP,newPass,confPass);
+
+                } else {
+                    if (TextUtils.isEmpty(username)) {
+                        editUsername.setError("Provide this field");
+                    } else {
+                        processForgotPasswordRequest(username, hiddenLayout,editUsername);
+                    }
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
 
     private interface ApiService {
         @POST("api/login")
@@ -563,9 +782,20 @@ public class LoginActivity extends AppCompatActivity {
         Call<JsonObject> postData(@Body JsonObject body);
     }
 
+    private interface APIResendCode {
+        @PUT("api/login/resendcode")
+        Call<JsonObject> resendCodeData(@Body JsonObject body);
+    }
+
+    private interface APIResendCodeFinal {
+        @Headers({"Content-Type: application/json"})
+        @PUT("api/login/resetpassword")
+        Call<JsonObject> resendCodeData(@Body JsonObject body);
+    }
+
     private interface ApiServiceForgotPassword {
         @Headers({"Content-Type: application/json"})
-        @PUT("api/login/initiatepasswordrecovery")
+        @PUT("api/login/sendrecoverycode")
         Call<JsonObject> sendForgotPasswordRequest(@Body JsonObject body);
     }
 

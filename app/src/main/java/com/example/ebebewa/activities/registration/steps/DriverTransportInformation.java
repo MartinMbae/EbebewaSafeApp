@@ -43,11 +43,12 @@ public class DriverTransportInformation extends Step<DriverTransportInformation.
     private RadioGroup preffereedPaymentMethodRadioGroup;
     private Context context;
     private CFAlertDialog alertDialog;
-    private TextView typeOfVehicleTextView;
+    private TextView typeOfVehicleTextView,owner_of_vehicle;
    private View coverView;
 
 
     private boolean preferedDriverVehicleType = false;
+    private boolean driverOwnership = false;
     private ArrayList<Vehicle> vehicleArrayList;
     private String selectedVehicleId = "0";
     private ProgressDialog progressDialog;
@@ -60,15 +61,16 @@ public class DriverTransportInformation extends Step<DriverTransportInformation.
     @Override
     public TransportInfo getStepData() {
 
-        String plateNumber, payment, vehicleOwned;
+        String plateNumber, payment, vehicleOwned, vehicle_owner;
         vehicleOwned = selectedVehicleId;
         plateNumber = plateNumberEditText.getText() != null ? plateNumberEditText.getText().toString() : "";
+        vehicle_owner = owner_of_vehicle.getText() != null ? owner_of_vehicle.getText().toString() : "";
         int selectedPaymentId = preffereedPaymentMethodRadioGroup.getCheckedRadioButtonId();
         RadioButton radioButtonPayment = coverView.findViewById(selectedPaymentId);
         payment = "";
         if (radioButtonPayment != null)
             payment = radioButtonPayment.getText().toString();
-        return new TransportInfo(plateNumber, payment, vehicleOwned);
+        return new TransportInfo(plateNumber, payment, vehicleOwned,vehicle_owner);
     }
 
     @NonNull
@@ -88,6 +90,7 @@ public class DriverTransportInformation extends Step<DriverTransportInformation.
         getVehicleTypes();
 
         plateNumberEditText = view.findViewById(R.id.plateNumber);
+        owner_of_vehicle = view.findViewById(R.id.owner_of_vehicle);
         preffereedPaymentMethodRadioGroup = view.findViewById(R.id.radioGroupPayment);
         typeOfVehicleTextView = view.findViewById(R.id.type_of_vehicle);
         setListenerEditText(plateNumberEditText);
@@ -103,6 +106,16 @@ public class DriverTransportInformation extends Step<DriverTransportInformation.
                 }
 //                String[] vehicleTypes = {"Truck", "Pick-up", "Van", "Sedan","Saloon", "Probox","Tractor-Trailer"};
                 showSingleSelectionDialog("Select Vehicle Owned", vehicleTypes, vehicleIDS);
+
+            }
+        });
+        owner_of_vehicle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                String[] vehiclesOwners = {"Driver", "Vehicle Owner"};
+                showSingleSelectionDialogOwnership("Select Vehicle Ownership", vehiclesOwners);
 
             }
         });
@@ -227,12 +240,47 @@ public class DriverTransportInformation extends Step<DriverTransportInformation.
             return new IsDataValid(false, "Select your Vehicle Type");
         }
 
+        if (!driverOwnership) {
+            return new IsDataValid(false, "Select vehicle Ownership");
+        }
+
         if (stepData.plateNumber.length() < 6) {
             return new IsDataValid(false, "Plate number must contain at least 6 characters");
         }
         return new IsDataValid(true);
     }
 
+
+    private void showSingleSelectionDialogOwnership(String title, final String[] owners) {
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(context);
+        builder.setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT);
+        builder.setTitle(title);
+
+        builder.setTextGravity(Gravity.CENTER_HORIZONTAL);
+
+        builder.addButton("Select", -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        });
+
+        // Single choice list items
+        builder.setSingleChoiceItems(owners, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String selectedOption = owners[which];
+                driverOwnership = true;
+                owner_of_vehicle.setText(selectedOption);
+                markAsCompletedOrUncompleted(true);
+            }
+        });
+
+        // Cancel on background tap
+        builder.setCancelable(true);
+        alertDialog = builder.show();
+
+    }
 
     private void showSingleSelectionDialog(String title, final String[] vehicleNames, final String[] vehicleIds) {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(context);
@@ -269,12 +317,13 @@ public class DriverTransportInformation extends Step<DriverTransportInformation.
 
     public static class TransportInfo {
 
-        public String plateNumber, payment, vehicleOwned;
+        public String plateNumber, payment, vehicleOwned, owner_of_vehicle;
 
-        public TransportInfo(String plateNumber, String payment, String vehicleOwned) {
+        public TransportInfo(String plateNumber, String payment, String vehicleOwned, String owner_of_vehicle) {
             this.plateNumber = plateNumber;
             this.payment = payment;
             this.vehicleOwned = vehicleOwned;
+            this.owner_of_vehicle = owner_of_vehicle;
         }
     }
 
