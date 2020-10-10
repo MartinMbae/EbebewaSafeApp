@@ -2,6 +2,7 @@ package com.example.ebebewa.activities.job_applicants;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -64,6 +66,7 @@ public class JobApplicantsAdapter extends RecyclerView.Adapter<JobApplicantsAdap
         holder.deliveryStatusLayout.setVisibility(View.GONE);
         holder.onTransitLayout.setVisibility(View.GONE);
         holder.view_more.setText("View More");
+        checkGetDriverRatings(applicant.getDriver(),holder.driver_ratings);
         final String status;
         if (applicant.getStatus().equals("0")) {
             status = "Pending";
@@ -106,6 +109,32 @@ public class JobApplicantsAdapter extends RecyclerView.Adapter<JobApplicantsAdap
         queue.add(myReq);
     }
 
+    private void checkGetDriverRatings(String driver_id, TextView driver_ratings) {
+        String uri = Constants.BASE_URL + "api/posts/getratings/" + driver_id;
+        StringRequest myReq = new StringRequest(Request.Method.GET,
+                uri, response -> parseDriverRating(response, driver_ratings), error -> {
+            Log.d("ddddddddddd",error.getMessage());
+        });
+        RequestQueue queue = Volley.newRequestQueue(context);
+        queue.add(myReq);
+    }
+
+    private void parseDriverRating(String response, TextView driver_ratings) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+
+          String rating =   jsonObject.getString("rating");
+
+          rating = rating +" Points";
+
+          driver_ratings.setText(rating);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void parseAppliedJobs(String response, TextView view_more, LinearLayout deliveryLayout, LinearLayout onTransitLayout) {
         try {
             JSONArray jsonArray = new JSONArray(response);
@@ -140,7 +169,7 @@ public class JobApplicantsAdapter extends RecyclerView.Adapter<JobApplicantsAdap
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView fullName, phoneNumber, vehicleType, status, view_more;
+        private TextView fullName, phoneNumber, vehicleType, status, view_more,driver_ratings;
         private LinearLayout deliveryStatusLayout, onTransitLayout;
 
         MyViewHolder(View view) {
@@ -148,6 +177,7 @@ public class JobApplicantsAdapter extends RecyclerView.Adapter<JobApplicantsAdap
             fullName = view.findViewById(R.id.fullName);
             phoneNumber = view.findViewById(R.id.phoneNumber);
             vehicleType = view.findViewById(R.id.vehicleType);
+            driver_ratings = view.findViewById(R.id.driver_ratings);
             status = view.findViewById(R.id.status);
             deliveryStatusLayout = view.findViewById(R.id.deliveryStatusLayout);
             view_more = view.findViewById(R.id.view_more);
