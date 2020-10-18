@@ -1,15 +1,22 @@
 package com.example.ebebewa.activities;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -17,20 +24,42 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.ebebewa.utils.Constants;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+
 import com.example.ebebewa.R;
 import com.example.ebebewa.fragments.HomeFragmentDriver;
 import com.example.ebebewa.fragments.ProfileFragmentDriver;
 import com.example.ebebewa.fragments.SettingsFragment;
 import com.example.ebebewa.fragments.available_jobs.AvailableJobsFragmentHolder;
 import com.example.ebebewa.utils.SharedPref;
+import com.yayandroid.locationmanager.base.LocationBaseActivity;
+import com.yayandroid.locationmanager.configuration.Configurations;
+import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.constants.FailType;
+import com.yayandroid.locationmanager.constants.ProcessType;
 
-public class HomeActivityDriver extends AppCompatActivity {
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+public class HomeActivityDriver extends LocationBaseActivity {
 
 
     private static final String TAG_HOME = "home";
@@ -85,6 +114,8 @@ public class HomeActivityDriver extends AppCompatActivity {
             CURRENT_TAG = TAG_HOME;
             loadHomeFragment();
         }
+
+        getLocation();
     }
 
     private void loadNavHeader() {
@@ -329,4 +360,133 @@ public class HomeActivityDriver extends AppCompatActivity {
         startActivity(loginIntent);
 
     }
+
+    @Override
+    public LocationConfiguration getLocationConfiguration() {
+        return Configurations.defaultConfiguration("Give us the permission!", "Would you mind to turn GPS on?");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(HomeActivityDriver.this, Locale.getDefault());
+
+        double   latitude = location.getLatitude();
+        double  longitude = location.getLongitude();
+
+        String address = "";
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+            if (addresses != null && addresses.size() > 0) {
+                String addressLoc = addresses.get(0).getAddressLine(0);
+                String city = addresses.get(0).getLocality();
+                String county = addresses.get(0).getAdminArea();
+                String country = addresses.get(0).getCountryName();
+//                String postalCode = addresses.get(0).getPostalCode();
+                String knownName = addresses.get(0).getFeatureName();
+
+                if (country.equals("Kenya")) {
+                    address = (county + " " + addressLoc);
+                }else {
+                    address = "Could not get location";
+                }
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        String appendValue = location.getLatitude() + ", " + location.getLongitude() + ", " + address + "\n";
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("latitude",  location.getLatitude());
+        jsonObject.addProperty("longitude",  location.getLongitude());
+        jsonObject.addProperty("current_location", address);
+        submitLocationUpdates(jsonObject);
+
+        Toast.makeText(this, appendValue, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLocationFailed(@FailType int failType) {
+    }
+
+    @Override
+    public void onProcessTypeChanged(@ProcessType int processType) {
+    }
+
+
+    private void submitLocationUpdates(JsonObject jsonObject) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ApiService service = retrofit.create(ApiService.class);
+        Call<JsonObject> call = service.updateLocationDetails(sharedPref.getLoggedInUserID(), jsonObject);
+        call.enqueue(new Callback<JsonObject>() {
+
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+
+                if (response.isSuccessful()) {
+                    String response_string = response.body().toString();
+                    try {
+                        JSONObject obj = new JSONObject(response_string);
+                        String status = obj.getString("status");
+                        String message = obj.getString("message");
+                        if (status.equals("true")) {
+
+
+                        } else {
+                            showSuccessfulDialog("Oops", "Something went wrong. Please try again ");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        showSuccessfulDialog("Failed", "Something went wrong. Please try again " + e.getMessage());
+                    }
+                } else {
+                    showSuccessfulDialog("Failed", "Something went wrong. Please try again ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+            }
+
+        });
+    }
+
+    void showSuccessfulDialog(String title, String message) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivityDriver.this);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+
+    private interface ApiService {
+        @Headers({"Content-Type: application/json"})
+        @PUT("api/drivers/updateDriverLocation/{id}")
+        Call<JsonObject> updateLocationDetails(@Path("id") String driver_id, @Body JsonObject body);
+    }
+
+
+
 }
