@@ -17,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ebebewa.WhereFromActivity;
 import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
@@ -80,8 +81,8 @@ public class HomeFragmentClient extends Fragment {
 //            getDeliveredCount();
 
             getPostedJobs();
-            postJobsLayout.setOnClickListener(v -> startActivity(new Intent(getActivity(), PostDeliveryJobActivity.class)));
-            floatingActionButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), PostDeliveryJobActivity.class)));
+            postJobsLayout.setOnClickListener(v -> startActivity(new Intent(getActivity(), WhereFromActivity.class)));
+            floatingActionButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), WhereFromActivity.class)));
         }
         return view;
     }

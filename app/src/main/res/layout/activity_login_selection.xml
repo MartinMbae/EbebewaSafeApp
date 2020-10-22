@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_150sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/logo"
+            android:layout_marginBottom="@dimen/_30sdp"/>
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8.0dip"
+            android:background="@drawable/btn_login"
+            android:onClick="LoginClient"
+            android:text="Login as Client"
+            android:theme="@style/ButtonLogin" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/btn_login"
+            android:onClick="LoginDriver"
+            android:text="Login as Driver"
+            android:theme="@style/ButtonLogin" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="#B9C3C3C3"
+            android:layout_marginTop="@dimen/_40sdp"/>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:gravity="bottom"
+            android:textSize="@dimen/_14sdp"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:textColor="@color/black"
+            android:paddingBottom="@dimen/_10sdp"
+            android:text="Have no account?" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:gravity="bottom"
+            android:textSize="@dimen/_14sdp"
+            android:paddingStart="@dimen/_15sdp"
+            android:paddingEnd="@dimen/_15sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:textColor="@color/black"
+            android:textAllCaps="true"
+            android:onClick="toRegister"
+            android:background="#39CFC7C7"
+            android:text="Register" />
+
+
+    </LinearLayout>
+
+</ScrollView>

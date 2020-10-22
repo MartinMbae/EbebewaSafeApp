@@ -29,12 +29,10 @@ public class DriverCountyPostal extends Step<DriverCountyPostal.CountyPostal> {
     private String selectedCountyString = "", selectedPostalString = "";
     private Context context;
 
-    private String role;
 
-    public DriverCountyPostal(String title, String subtitle, Context context, String role) {
+    public DriverCountyPostal(String title, String subtitle, Context context) {
         super(title, subtitle);
         this.context = context;
-        this.role = role;
 
     }
 
@@ -127,9 +125,6 @@ public class DriverCountyPostal extends Step<DriverCountyPostal.CountyPostal> {
             return new IsDataValid(false, "Select your county");
         }
 
-        if (stepData.postal.length() < 2 && role.equals(Constants.DRIVER_ROLE)) {
-            return new IsDataValid(false, "Select your postal code");
-        }
 
         return new IsDataValid(true);
 

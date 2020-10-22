@@ -64,8 +64,6 @@ public class AvailableJobAdapter extends RecyclerView.Adapter<AvailableJobAdapte
         //2  ->  Failed
 
 
-        Log.d("dddddddddd", "JobID " + jobPostId + "   applied status" + appliedStatus);
-
         if (appliedStatus != null) {
             if (appliedStatus.equals("0")) {
                 holder.applyButton.setEnabled(false);
@@ -73,8 +71,16 @@ public class AvailableJobAdapter extends RecyclerView.Adapter<AvailableJobAdapte
 
                 holder.waitingClientConfirmationLayout.setVisibility(View.VISIBLE);
             } else {
-                holder.applyButton.setEnabled(true);
-                holder.applyButton.setText("Apply");
+                if (driverAvailableJobsFragment.hasJobInTransit){
+                    holder.applyButton.setEnabled(false);
+                    holder.applyButton.setText("Can't apply. You have an incomplete job");
+
+                }else {
+                    holder.applyButton.setEnabled(true);
+                    holder.applyButton.setText("Apply");
+
+                }
+
                 holder.waitingClientConfirmationLayout.setVisibility(View.GONE);
             }
         } else {

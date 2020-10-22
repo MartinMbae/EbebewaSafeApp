@@ -19,6 +19,21 @@
             android:src="@drawable/logo" />
 
         <TextView
+            android:id="@+id/loginUserType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:gravity="center"
+            android:text="Login as Client"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+
+
+        <TextView
             android:id="@+id/loginErrorMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -106,19 +121,6 @@
             android:text="Forgot Password"
             android:textColor="@color/blue" />
 
-        <TextView
-            android:id="@+id/signUp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:gravity="bottom"
-            android:paddingStart="@dimen/_5sdp"
-            android:paddingTop="@dimen/_10sdp"
-            android:paddingEnd="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_10sdp"
-            android:text="Have no account? Register"
-            android:textColor="@color/blue" />
 
     </LinearLayout>
 </ScrollView>

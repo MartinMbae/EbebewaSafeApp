@@ -57,7 +57,7 @@ public class NewDriverReg extends AppCompatActivity implements StepperFormListen
         driverPersonalDetails = new DriverPersonalDetails("Your Personal Details", "", this, null, NewDriverReg.this, Constants.DRIVER_ROLE);
         driverUsernamePassword = new DriverUsernamePassword("Your Username and Password", "");
         inviteAgentCode = new InviteAgentCode("Agent Invite Code","");
-        driverCountyPostal = new DriverCountyPostal("Your Address", "", NewDriverReg.this, Constants.DRIVER_ROLE);
+        driverCountyPostal = new DriverCountyPostal("Your Address", "", NewDriverReg.this);
         driverTransportInformation = new DriverTransportInformation("Driver Transport Information", "", NewDriverReg.this);
 
         progressDialog = new ProgressDialog(this);
@@ -162,12 +162,12 @@ public class NewDriverReg extends AppCompatActivity implements StepperFormListen
                         String message = obj.getString("message");
                         if (status.equals("true")) {
                             Toast.makeText(NewDriverReg.this, "Account created successfully. Please login", Toast.LENGTH_SHORT).show();
-
                             Intent loginIntent = new Intent(NewDriverReg.this, LoginActivity.class);
                             loginIntent.putExtra("FROM_REGISTER", 2);
                             loginIntent.putExtra("phone", phoneString);
                             loginIntent.putExtra("username", usernameString);
                             loginIntent.putExtra("password", passwordString);
+                            loginIntent.putExtra("class", Constants.DRIVER_ROLE);
                             startActivity(loginIntent);
                         } else {
                             showSuccessfulDialog("Oops!", message);

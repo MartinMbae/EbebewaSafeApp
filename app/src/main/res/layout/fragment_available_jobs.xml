@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_10sdp"
             android:gravity="center"
-            android:text="We have no available job for you at the moment.\n\nPlease check agin later."
+            android:text="We have no available job for you at the moment.\n\nPlease check again later."
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
 

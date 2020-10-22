@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ebebewa.activities.ClientWelcomeActivity;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -52,7 +53,6 @@ public class CheckUpdateActivity extends AppCompatActivity {
                 retry();
             }
         });
-
     }
 
     @Override
@@ -121,7 +121,7 @@ public class CheckUpdateActivity extends AppCompatActivity {
                 break;
 
             case Constants.CLIENT_ROLE:
-                Intent clientIntent = new Intent(CheckUpdateActivity.this, HomeActivityClient.class);
+                Intent clientIntent = new Intent(CheckUpdateActivity.this, ClientWelcomeActivity.class);
                 startActivity(clientIntent);
                 finish();
                 break;
@@ -133,7 +133,7 @@ public class CheckUpdateActivity extends AppCompatActivity {
                 break;
 
             default:
-                startActivity(new Intent(CheckUpdateActivity.this, LoginActivity.class));
+                startActivity(new Intent(CheckUpdateActivity.this, LoginSelectionActivity.class));
                 finish();
                 break;
         }

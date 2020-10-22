@@ -27,11 +27,11 @@ public class HomeFragmentDriver extends Fragment {
     private TextView availableJobs, transistJobs, deliveredJobs, appliedJobs;
     private ProgressBar availableJobsProgressBar, appliedJobsProgressBar, transitProgressBar, deliveredProgressBar;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_driver, container, false);
-
         if (getActivity() != null) {
             sharedPref = new SharedPref(getActivity());
             availableJobs = view.findViewById(R.id.driver_availableJobs);

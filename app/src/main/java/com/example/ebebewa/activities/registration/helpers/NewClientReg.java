@@ -57,7 +57,7 @@ private InviteAgentCode inviteAgentCode;
 
         driverPersonalDetails = new DriverPersonalDetails("Your Personal Details", "", null, this, NewClientReg.this, Constants.CLIENT_ROLE);
         driverUsernamePassword = new DriverUsernamePassword("Your Username and Password", "");
-        driverCountyPostal = new DriverCountyPostal("Your Address", "", NewClientReg.this, Constants.CLIENT_ROLE);
+        driverCountyPostal = new DriverCountyPostal("Your Address", "", NewClientReg.this);
         clientPaymentInformation = new ClientPaymentInformation("Payment Method", "");
         inviteAgentCode = new InviteAgentCode("Agent Invite Code","");
 
@@ -217,6 +217,7 @@ private InviteAgentCode inviteAgentCode;
                                 loginIntent.putExtra("phone", phoneString);
                                 loginIntent.putExtra("username", usernameString);
                                 loginIntent.putExtra("password", passwordString);
+                                loginIntent.putExtra("class", Constants.CLIENT_ROLE);
                                 loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(loginIntent);
                             } else {

@@ -356,6 +356,7 @@ public class HomeActivityDriver extends LocationBaseActivity {
     private void logOut() {
         sharedPref.logOut();
         Intent loginIntent = new Intent(HomeActivityDriver.this, LoginActivity.class);
+        loginIntent.putExtra("class", Constants.DRIVER_ROLE);
         loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
 
@@ -407,7 +408,6 @@ public class HomeActivityDriver extends LocationBaseActivity {
         jsonObject.addProperty("current_location", address);
         submitLocationUpdates(jsonObject);
 
-        Toast.makeText(this, appendValue, Toast.LENGTH_SHORT).show();
     }
 
     @Override

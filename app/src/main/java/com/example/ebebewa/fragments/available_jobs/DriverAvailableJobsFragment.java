@@ -54,6 +54,7 @@ public class DriverAvailableJobsFragment extends Fragment {
     private ProgressBar progressBar;
 
     private RecyclerView recyclerView;
+    public boolean hasJobInTransit = false;
 
     private ProgressDialog progressDialog;
 
@@ -75,6 +76,7 @@ public class DriverAvailableJobsFragment extends Fragment {
             getLuggageNature();
             getAppliedJobs();
         }
+        checkIfHasJobOnTransit();
         return view;
     }
     private void getVehicleTypes() {
@@ -327,5 +329,22 @@ public class DriverAvailableJobsFragment extends Fragment {
         Call<JsonObject> postData(@Body JsonObject body);
     }
 
+
+    private void checkIfHasJobOnTransit() {
+        String uri = Constants.BASE_URL + "api/posts/countjobsontransit/" + sharedPref.getUserName();
+        StringRequest myReq = new StringRequest(Request.Method.GET,
+                uri, response -> {
+            try {
+                int count = Integer.parseInt(response);
+                if (count > 0){
+                    hasJobInTransit = true;
+                }
+            }catch (Exception ignored){}
+        }, error -> {
+        });
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(myReq);
+    }
 
 }

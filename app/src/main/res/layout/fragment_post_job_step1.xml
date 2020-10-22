@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
             android:layout_margin="@dimen/_12sdp" />
+
         <Button
             android:id="@+id/nextBtn"
             android:layout_width="@dimen/_200sdp"

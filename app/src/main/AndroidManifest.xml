@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:roundIcon">
-        <activity android:name=".CheckUpdateActivity"></activity>
+        <activity android:name=".LoginSelectionActivity"/>
         <activity android:name=".activities.PaymentsAcivity" />
         <activity android:name=".VerifyActivity" />
         <activity android:name=".activities.job_applicants.JobApplicantsActivity" />
@@ -37,10 +37,12 @@
             android:theme="@style/NoToolBarOnly" />
         <activity
             android:name=".activities.LoginActivity"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName=".LoginSelectionActivity"/>
         <activity android:name=".activities.MainActivity" />
+
         <activity
-            android:name=".activities.LaunchActivity"
+            android:name=".CheckUpdateActivity"
             android:theme="@style/NoToolBarAndStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,6 +70,14 @@
             android:name=".activities.IntroActivity"
             android:theme="@style/NoToolBarAndStatusBar" />
         <activity android:name=".activities.InviteActivity" />
+        <activity android:name=".WhereFromActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".DateTimeSelectionActivity"/>
+        <activity android:name=".LocationLuggageDescActivity"/>
+        <activity android:name=".TransportMode" />
+        <activity android:name=".activities.ClientWelcomeActivity" />
+        <activity android:name=".SummaryActivity" />
+        <activity android:name=".JobPostingSuccessActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

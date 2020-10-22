@@ -41,4 +41,10 @@
     <string name="invite_users">Invite Users</string>
 
 
+    <!--    Permissions    -->
+    <string name="permission_rationale_location">Access to the location service is required</string>
+    <string name="location_permission_denied">This app requires location permission. Please try again and grant access to use the location.\nIf the permission has been permanently denied, it can be enabled from the System Settings &gt; Apps &gt; \'Ebebewa App\'.</string>
+    <string name="permission_required_toast">Location permission is required for this app.</string>
+    <string name="post_success">Success.\nYour luggage delivery job has been posted successfully. We shall notify you once a driver is available to pick the luggage.\n\nThank you for using Ebebewa.</string>
+
 </resources>

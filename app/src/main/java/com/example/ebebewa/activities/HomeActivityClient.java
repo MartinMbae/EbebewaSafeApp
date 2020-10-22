@@ -21,6 +21,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ebebewa.LoginSelectionActivity;
+import com.example.ebebewa.WhereFromActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -226,7 +228,7 @@ public class HomeActivityClient extends AppCompatActivity {
                         CURRENT_TAG = TAG_PROFILE;
                         break;
                     case R.id.nav_post_job:
-                        startActivity(new Intent(HomeActivityClient.this, PostDeliveryJobActivity.class));
+                        startActivity(new Intent(HomeActivityClient.this, WhereFromActivity.class));
                         drawer.closeDrawers();
                         break;
 //                    case R.id.nav_invite:
@@ -258,6 +260,7 @@ public class HomeActivityClient extends AppCompatActivity {
                         break;
 
                     default:
+
                         navItemIndex = 0;
                 }
 
@@ -299,6 +302,7 @@ public class HomeActivityClient extends AppCompatActivity {
     private void logOut() {
         sharedPref.logOut();
         Intent loginIntent = new Intent(HomeActivityClient.this, LoginActivity.class);
+        loginIntent.putExtra("class", Constants.CLIENT_ROLE);
         loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
 

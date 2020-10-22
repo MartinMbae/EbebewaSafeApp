@@ -106,7 +106,7 @@ public class PostFragmentStep4 extends Fragment {
                     jsonObject.addProperty("origin_contact", sendNumber);
                     jsonObject.addProperty("to_places", postDeliveryJobActivity.luggage_destination);
                     jsonObject.addProperty("destination_contact", receiverNumber);
-                    jsonObject.addProperty("luggage_nature", "1");
+                    jsonObject.addProperty("luggage_nature", postDeliveryJobActivity.selectedLuggageNature);
                     jsonObject.addProperty("vehicle_type", postDeliveryJobActivity.selectedVehicleId);
                     jsonObject.addProperty("amount", postDeliveryJobActivity.calculatedAmount);
                     jsonObject.addProperty("location_description", locationDescription);
@@ -119,7 +119,6 @@ public class PostFragmentStep4 extends Fragment {
     }
 
     private void setTextWatchers(EditText editText) {
-
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

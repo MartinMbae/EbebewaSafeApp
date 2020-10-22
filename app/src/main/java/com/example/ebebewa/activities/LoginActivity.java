@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,10 +19,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.example.ebebewa.LoginSelectionActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -56,11 +59,13 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText username, password;
     Button login;
-    TextView signUp, forgotPassword;
+    TextView forgotPassword,loginUserType;
     TextInputLayout txtInLayoutUsername, txtInLayoutPassword;
     TextView errorTextView;
     ProgressDialog progressDialog;
     SharedPref sharedPref;
+
+    String userType;
 
 
     @Override
@@ -71,14 +76,23 @@ public class LoginActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
-        signUp = findViewById(R.id.signUp);
         txtInLayoutUsername = findViewById(R.id.txtInLayoutUsername);
         txtInLayoutPassword = findViewById(R.id.txtInLayoutPassword);
         errorTextView = findViewById(R.id.loginErrorMessage);
         forgotPassword = findViewById(R.id.forgotPassword);
+        loginUserType = findViewById(R.id.loginUserType);
         errorTextView.setVisibility(View.GONE);
 
         sharedPref = new SharedPref(this);
+
+        Bundle bundle = getIntent().getExtras();
+       userType =  bundle.getString("class");
+
+       if (userType.equals(Constants.CLIENT_ROLE)){
+           loginUserType.setText("Login as Client");
+       }else if (userType.equals(Constants.DRIVER_ROLE)){
+           loginUserType.setText("Login as Driver");
+       }
 
 
         int pos = getIntent().getIntExtra("FROM_REGISTER", 0);
@@ -95,13 +109,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         ClickLogin();
-        //SignUp's Button for showing registration page
-        signUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ClickSignUp();
-            }
-        });
 
 
         forgotPassword.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +118,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
     }
 
     private void processForgotPasswordRequest(String username, LinearLayout hiddenLayout, TextInputEditText editUsername) {
@@ -278,43 +289,9 @@ public class LoginActivity extends AppCompatActivity {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("username", usernameText);
         jsonObject.addProperty("pass", passwordText);
+        jsonObject.addProperty("role", userType);
 
         submitData(jsonObject, phone, usernameText, passwordText);
-    }
-
-    //The method for opening the registration page and another processes or checks for registering
-    private void ClickSignUp() {
-
-        final Dialog dialog = new Dialog(LoginActivity.this);
-
-//        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.register, null);
-        dialog.setContentView(dialogView);
-
-        Button register_driver = dialogView.findViewById(R.id.reg_register_driver);
-        Button register_client = dialogView.findViewById(R.id.reg_register_client);
-
-
-        register_client.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                startActivity(new Intent(LoginActivity.this, NewClientReg.class));
-            }
-        });
-
-        register_driver.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                startActivity(new Intent(LoginActivity.this, NewDriverReg.class));
-            }
-        });
-
-        dialog.show();
-
-
     }
 
     private void submitData(JsonObject jsonObject, final String phone, final String usernameText, final String passwordText) {
@@ -771,6 +748,17 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            Intent loginSelectionIntent = new Intent(LoginActivity.this, LoginSelectionActivity.class);
+            loginSelectionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginSelectionIntent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private interface ApiService {

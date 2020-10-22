@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.ebebewa.LoginSelectionActivity;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -166,7 +167,7 @@ public class IntroActivity extends AppCompatActivity {
                 break;
 
             default:
-                startActivity(new Intent(IntroActivity.this, LoginActivity.class));
+                startActivity(new Intent(IntroActivity.this, LoginSelectionActivity.class));
                 finish();
                 break;
         }
