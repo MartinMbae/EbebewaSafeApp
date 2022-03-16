@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:paddingBottom="@dimen/_50sdp"
-    tools:context="com.example.ebebewa.fragments.NotificationsFragment">
+    tools:context="com.example.ebebewa_app.fragments.NotificationsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

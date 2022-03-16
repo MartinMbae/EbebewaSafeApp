@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.ebebewa">
+    package="com.example.ebebewa_app">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,29 +20,29 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:roundIcon">
-        <activity android:name=".LoginSelectionActivity"/>
-        <activity android:name=".activities.PaymentsAcivity" />
-        <activity android:name=".VerifyActivity" />
-        <activity android:name=".activities.job_applicants.JobApplicantsActivity" />
+        <activity android:name="com.example.ebebewa_app.LoginSelectionActivity"/>
+        <activity android:name="com.example.ebebewa_app.activities.PaymentsAcivity" />
+        <activity android:name="com.example.ebebewa_app.VerifyActivity" />
+        <activity android:name="com.example.ebebewa_app.activities.job_applicants.JobApplicantsActivity" />
         <activity
-            android:name=".activities.EditPostedJobActivity"
+            android:name="com.example.ebebewa_app.activities.EditPostedJobActivity"
             android:label="Edit Delivery Job" />
-        <activity android:name=".activities.PrivacyPolicyActivity" />
-        <activity android:name=".activities.AboutUsActivity" />
+        <activity android:name="com.example.ebebewa_app.activities.PrivacyPolicyActivity" />
+        <activity android:name="com.example.ebebewa_app.activities.AboutUsActivity" />
         <activity
-            android:name=".activities.HomeActivityDriver"
+            android:name="com.example.ebebewa_app.activities.HomeActivityDriver"
             android:theme="@style/NoToolBarOnly" />
         <activity
-            android:name=".activities.HomeActivityClient"
+            android:name="com.example.ebebewa_app.activities.HomeActivityClient"
             android:theme="@style/NoToolBarOnly" />
         <activity
-            android:name=".activities.LoginActivity"
+            android:name="com.example.ebebewa_app.activities.LoginActivity"
             android:windowSoftInputMode="stateHidden"
-            android:parentActivityName=".LoginSelectionActivity"/>
-        <activity android:name=".activities.MainActivity" />
+            android:parentActivityName="com.example.ebebewa_app.LoginSelectionActivity"/>
+        <activity android:name="com.example.ebebewa_app.activities.MainActivity" />
 
         <activity
-            android:name=".CheckUpdateActivity"
+            android:name="com.example.ebebewa_app.CheckUpdateActivity"
             android:theme="@style/NoToolBarAndStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,33 +51,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.registration.helpers.NewDriverReg"
+            android:name="com.example.ebebewa_app.activities.registration.helpers.NewDriverReg"
             android:theme="@style/AppThemeMaterialStyle" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".activities.registration.helpers.NewClientReg"
+            android:name="com.example.ebebewa_app.activities.registration.helpers.NewClientReg"
             android:theme="@style/AppThemeMaterialStyle" />
-        <activity android:name=".activities.FaqActivity" />
+        <activity android:name="com.example.ebebewa_app.activities.FaqActivity" />
         <activity
-            android:name=".activities.post_job.PostDeliveryJobActivity"
+            android:name="com.example.ebebewa_app.activities.post_job.PostDeliveryJobActivity"
             android:label="Post Delivery Job"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".activities.TermsConditionsActivity" />
-        <activity android:name=".IPayActivity" />
+        <activity android:name="com.example.ebebewa_app.activities.TermsConditionsActivity" />
+        <activity android:name="com.example.ebebewa_app.IPayActivity" />
         <activity
-            android:name=".activities.IntroActivity"
+            android:name="com.example.ebebewa_app.activities.IntroActivity"
             android:theme="@style/NoToolBarAndStatusBar" />
-        <activity android:name=".activities.InviteActivity" />
-        <activity android:name=".WhereFromActivity"
+        <activity android:name="com.example.ebebewa_app.activities.InviteActivity" />
+        <activity android:name="com.example.ebebewa_app.WhereFromActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".DateTimeSelectionActivity"/>
-        <activity android:name=".LocationLuggageDescActivity"/>
-        <activity android:name=".TransportMode" />
-        <activity android:name=".activities.ClientWelcomeActivity" />
-        <activity android:name=".SummaryActivity" />
-        <activity android:name=".JobPostingSuccessActivity" />
+        <activity android:name="com.example.ebebewa_app.DateTimeSelectionActivity"/>
+        <activity android:name="com.example.ebebewa_app.LocationLuggageDescActivity"/>
+        <activity android:name="com.example.ebebewa_app.TransportMode" />
+        <activity android:name="com.example.ebebewa_app.activities.ClientWelcomeActivity" />
+        <activity android:name="com.example.ebebewa_app.SummaryActivity" />
+        <activity android:name="com.example.ebebewa_app.JobPostingSuccessActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

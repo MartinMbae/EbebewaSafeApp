@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/greyish"
     android:padding="@dimen/_10sdp"
-    tools:context="com.example.ebebewa.fragments.HomeFragmentDriver">
+    tools:context="com.example.ebebewa_app.fragments.HomeFragmentDriver">
 
     <LinearLayout
         android:layout_width="match_parent"
